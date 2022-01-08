@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create VPC, IGW, Subnets, Routetables.
+
+Resources:
+  #-----------------------------------------------------------------------------
+  # VPCs
+  #-----------------------------------------------------------------------------
+  VPC01:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: True
+      Tags:
+        - Key: Name
+          Value: VPC01
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W60
+            reason: Pending
+
+  #-----------------------------------------------------------------------------
+  # IGWs
+  #-----------------------------------------------------------------------------
+  IGW01:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: IGW01
+
+  VPC01IGW01Attachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC01
+      InternetGatewayId: !Ref IGW01
+
+  #-----------------------------------------------------------------------------
+  # Subnets
+  #-----------------------------------------------------------------------------
+  VPC01PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      VpcId: !Ref VPC01
+      Tags:
+        - Key: Name
+          Value: VPC01PublicSubnet
+    DependsOn: VPC01IGW01Attachment
+
+  VPC01PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VPC01PublicSubnet
+      RouteTableId: !Ref VPC01PublicRouteTable
+
+  #-----------------------------------------------------------------------------
+  # RouteTables
+  #-----------------------------------------------------------------------------
+  VPC01PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC01
+      Tags:
+        - Key: Name
+          Value: VPC01PublicRouteTable
+    DependsOn: VPC01IGW01Attachment
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref VPC01PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW01
+    DependsOn: VPC01IGW01Attachment
+
+Outputs:
+  VPC01:
+    Value: !Ref VPC01
+    Export:
+      Name: VPC01
+
+  VPC01PublicSubnet:
+    Value: !Ref VPC01PublicSubnet
+    Export:
+      Name: VPC01PublicSubnet

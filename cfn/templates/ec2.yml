@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create security groups, EC2 instances.
+
+Resources:
+  #-----------------------------------------------------------------------------
+  # Security groups
+  #-----------------------------------------------------------------------------
+  # For web servers.
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: web-security-group
+      GroupDescription: Enable HTTP access.
+      VpcId: !ImportValue VPC01
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: for HTTP
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F1000
+            reason: Pending
+          - id: W2
+            reason: Pending
+          - id: W9
+            reason: Pending
+          - id: W28
+            reason: Pending
+
+  #-----------------------------------------------------------------------------
+  # EC2 instances
+  #-----------------------------------------------------------------------------
+  Web01EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0218d08a1f9dac831
+      InstanceType: t2.micro
+      NetworkInterfaces:
+        - DeviceIndex: 0
+          AssociatePublicIpAddress: true
+          SubnetId: !ImportValue VPC01PublicSubnet
+          GroupSet:
+            - !Ref WebSecurityGroup
+      IamInstanceProfile: !ImportValue Web01EC2InstanceProfile
+      Tags:
+        - Key: Name
+          Value: Web01
+        - Key: Patch Group
+          Value: Web
+
+Outputs:
+  Web01EC2Instance:
+    Value: !Ref Web01EC2Instance
+    Export:
+      Name: Web01EC2Instance

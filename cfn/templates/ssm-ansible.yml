@@ -1,0 +1,39 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Apply ansible playbooks with EC2 instances.
+
+Resources:
+  #-----------------------------------------------------------------------------
+  # Associations
+  #-----------------------------------------------------------------------------
+  ApplyAnsiblePlaybooksAssociation:
+    Type: AWS::SSM::Association
+    Properties:
+      Name: AWS-ApplyAnsiblePlaybooks
+      AssociationName: apply-ansible-playbooks-association
+      WaitForSuccessTimeoutSeconds: 300
+      Targets:
+        - Key: InstanceIds
+          Values:
+            - !ImportValue Web01EC2Instance
+      OutputLocation:
+        S3Location:
+          OutputS3BucketName: !Sub ansible-playbooks-${AWS::AccountId}
+          OutputS3KeyPrefix: log
+      Parameters:
+        SourceType:
+          - S3
+        SourceInfo:
+          - !Sub |
+            {"path": "https://ansible-playbooks-${AWS::AccountId}.s3-${AWS::Region}.amazonaws.com/playbooks.zip"}
+        InstallDependencies:
+          - "True"
+        PlaybookFile:
+          - ansible/playbooks/playbook.yml
+        ExtraVariables:
+          - SSM=True
+        Check:
+          - "False"
+        Verbose:
+          - -v

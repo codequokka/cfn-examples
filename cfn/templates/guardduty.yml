@@ -1,0 +1,29 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Enable a detector.
+
+Resources:
+  #-----------------------------------------------------------------------------
+  # Detector
+  #-----------------------------------------------------------------------------
+  Detector:
+    Type: AWS::GuardDuty::Detector
+    Properties:
+      FindingPublishingFrequency: SIX_HOURS
+      Enable: true
+
+  # TODO: Enable exporting logs to the S3 bucket by using managed console or CLI.
+  # Ex. CLI examaple to Enable exporting logs to the S3 bucket.
+  # ❯ aws guardduty create-publishing-destination \
+  #   --detector-id <guardduty-detector-id> \
+  #   --destination-type S3 \
+  #   --destination-properties DestinationArn=arn:aws:s3:::<guardduty-bucket>,\
+  #     KmsKeyArn=arn:aws:kms:<region>:<account_id>:key/<kms-key-id>
+
+Outputs:
+  GuarddutyDetectorID:
+    Description: Guardduty detector ID
+    Value: !Ref Detector
+    Export:
+      Name: GuarddutyDetectorID

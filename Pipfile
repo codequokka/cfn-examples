@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 cfn-lint = "*"
+pydot = "*"
 
 [dev-packages]
 

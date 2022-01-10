@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Create VPC, IGW, Subnets, Routetables.
+Description: Create VPC, IGW, Subnets, Routetables, EIP, NATGW.
 
 Resources:
   #-----------------------------------------------------------------------------
-  # VPCs
+  # VPC
   #-----------------------------------------------------------------------------
   VPC01:
     Type: AWS::EC2::VPC
@@ -21,7 +21,7 @@ Resources:
             reason: Pending
 
   #-----------------------------------------------------------------------------
-  # IGWs
+  # IGW
   #-----------------------------------------------------------------------------
   IGW01:
     Type: AWS::EC2::InternetGateway
@@ -39,6 +39,7 @@ Resources:
   #-----------------------------------------------------------------------------
   # Subnets
   #-----------------------------------------------------------------------------
+  # For public subnet.
   VPC01PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -55,9 +56,26 @@ Resources:
       SubnetId: !Ref VPC01PublicSubnet
       RouteTableId: !Ref VPC01PublicRouteTable
 
+  # For private subnet.
+  VPC01PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      VpcId: !Ref VPC01
+      Tags:
+        - Key: Name
+          Value: VPC01PrivateSubnet
+
+  VPC01PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VPC01PrivateSubnet
+      RouteTableId: !Ref VPC01PrivateRouteTable
+
   #-----------------------------------------------------------------------------
   # RouteTables
   #-----------------------------------------------------------------------------
+  # For public subnet.
   VPC01PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -75,6 +93,43 @@ Resources:
       GatewayId: !Ref IGW01
     DependsOn: VPC01IGW01Attachment
 
+  # For private subnet.
+  VPC01PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC01
+      Tags:
+        - Key: Name
+          Value: VPC01PrivateRouteTable
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref VPC01PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref PublicSubnetNatGateway
+      # GatewayId: !Ref IGW01
+
+  #-----------------------------------------------------------------------------
+  # EIP
+  #-----------------------------------------------------------------------------
+  PublicSubnetNatGatewayEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  #-----------------------------------------------------------------------------
+  # NATGW
+  #-----------------------------------------------------------------------------
+  PublicSubnetNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt PublicSubnetNatGatewayEIP.AllocationId
+      SubnetId: !Ref VPC01PublicSubnet
+      Tags:
+        - Key: Name
+          Value: public-subnet-nat-gateway
+
 Outputs:
   VPC01:
     Value: !Ref VPC01
@@ -85,3 +140,8 @@ Outputs:
     Value: !Ref VPC01PublicSubnet
     Export:
       Name: VPC01PublicSubnet
+
+  VPC01PrivateSubnet:
+    Value: !Ref VPC01PrivateSubnet
+    Export:
+      Name: VPC01PrivateSubnet

@@ -20,10 +20,9 @@ Resources:
   #   --destination-type S3 \
   #   --destination-properties DestinationArn=arn:aws:s3:::<guardduty-bucket>,\
   #     KmsKeyArn=arn:aws:kms:<region>:<account_id>:key/<kms-key-id>
-
-Outputs:
-  GuarddutyDetectorID:
-    Description: Guardduty detector ID
-    Value: !Ref Detector
-    Export:
-      Name: GuarddutyDetectorID
+# Outputs:
+#   GuarddutyDetectorID:
+#     Description: Guardduty detector ID
+#     Value: !Ref Detector
+#     Export:
+#       Name: GuarddutyDetectorID

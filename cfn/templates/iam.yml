@@ -1,7 +1,7 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Create IAM policies, groups, roles, users, instance profiles.
+Description: Create policies, groups, roles, users.
 
 Parameters:
   DefaultUserPassword:
@@ -135,29 +135,6 @@ Resources:
           - id: W43
             reason: This role can be only used by specified user with MFA is activated
 
-  # For EC2 instances.
-  EC2SSMRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: EC2SSMRole
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - ec2.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
-    Metadata:
-      cfn_nag:
-        rules_to_suppress:
-          - id: W28
-            reason: Pending
-
   #-----------------------------------------------------------------------------
   # Users
   #-----------------------------------------------------------------------------
@@ -193,20 +170,3 @@ Resources:
   #       rules_to_suppress:
   #         - id: W77
   #           reason: Pending
-
-  #-----------------------------------------------------------------------------
-  # Instance profiles
-  #-----------------------------------------------------------------------------
-  # For Web01 EC2 instance.
-  Web01EC2InstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      Roles:
-        - Ref: EC2SSMRole
-      InstanceProfileName: Web01EC2InstanceProfile
-
-Outputs:
-  Web01EC2InstanceProfile:
-    Value: !Ref Web01EC2InstanceProfile
-    Export:
-      Name: Web01EC2InstanceProfile

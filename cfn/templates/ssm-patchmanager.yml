@@ -34,6 +34,33 @@ Resources:
       PatchGroups:
         - Web
 
+  # For DB servers
+  DBPatchBaseline:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: DBPatchBaseline
+      OperatingSystem: AMAZON_LINUX_2
+      ApprovalRules:
+        PatchRules:
+          - PatchFilterGroup:
+              PatchFilters:
+                - Key: CLASSIFICATION
+                  Values:
+                    - Security
+                - Key: SEVERITY
+                  Values:
+                    - Critical
+                    - Important
+            ApproveAfterDays: 7
+          - PatchFilterGroup:
+              PatchFilters:
+                - Key: CLASSIFICATION
+                  Values:
+                    - Bugfix
+            ApproveAfterDays: 7
+      PatchGroups:
+        - DB
+
   #-----------------------------------------------------------------------------
   # Maintenace windows
   #-----------------------------------------------------------------------------
@@ -41,7 +68,7 @@ Resources:
     Type: AWS::SSM::MaintenanceWindow
     Properties:
       Name: patch-scan-maintenance-window
-      Schedule: cron(0 0 16 ? * * *)
+      Schedule: cron(0 0 0 ? * * *)
       ScheduleTimezone: Asia/Tokyo
       Duration: 1
       Cutoff: 0
@@ -60,6 +87,7 @@ Resources:
         - Key: tag:Patch Group
           Values:
             - Web
+            - DB
 
   #-----------------------------------------------------------------------------
   # Maintenace window tasks
@@ -78,8 +106,8 @@ Resources:
       TaskType: RUN_COMMAND
       TaskParameters: {}
       Priority: 1
-      MaxConcurrency: "50"
-      MaxErrors: "0"
+      MaxConcurrency: 50
+      MaxErrors: 0
       TaskInvocationParameters:
         MaintenanceWindowRunCommandParameters:
           Parameters:
@@ -88,3 +116,23 @@ Resources:
             SnapshotId:
               - "{{WINDOW_EXECUTION_ID}}"
           TimeoutSeconds: 600
+
+  #-----------------------------------------------------------------------------
+  # Associations
+  #-----------------------------------------------------------------------------
+  PatchScanAssociation:
+    Type: AWS::SSM::Association
+    Properties:
+      Name: AWS-RunPatchBaseline
+      AssociationName: patch-scan-association
+      WaitForSuccessTimeoutSeconds: 300
+      Targets:
+        - Key: tag:Patch Group
+          Values:
+            - Web
+            - DB
+      Parameters:
+        Operation:
+          - Scan
+        RebootOption:
+          - NoReboot

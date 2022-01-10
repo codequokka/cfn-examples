@@ -1,17 +1,17 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Apply ansible playbooks with EC2 instances.
+Description: Create associations.
 
 Resources:
   #-----------------------------------------------------------------------------
   # Associations
   #-----------------------------------------------------------------------------
-  ApplyAnsiblePlaybooksAssociation:
+  WebApplyAnsiblePlaybooksAssociation:
     Type: AWS::SSM::Association
     Properties:
       Name: AWS-ApplyAnsiblePlaybooks
-      AssociationName: apply-ansible-playbooks-association
+      AssociationName: web-apply-ansible-playbooks-association
       WaitForSuccessTimeoutSeconds: 300
       Targets:
         - Key: InstanceIds
@@ -30,7 +30,38 @@ Resources:
         InstallDependencies:
           - "True"
         PlaybookFile:
-          - ansible/playbooks/playbook.yml
+          - ansible/playbooks/web-playbook.yml
+        ExtraVariables:
+          - SSM=True
+        Check:
+          - "False"
+        Verbose:
+          - -v
+
+  DBApplyAnsiblePlaybooksAssociation:
+    Type: AWS::SSM::Association
+    Properties:
+      Name: AWS-ApplyAnsiblePlaybooks
+      AssociationName: db-apply-ansible-playbooks-association
+      WaitForSuccessTimeoutSeconds: 300
+      Targets:
+        - Key: InstanceIds
+          Values:
+            - !ImportValue DB01EC2Instance
+      OutputLocation:
+        S3Location:
+          OutputS3BucketName: !Sub ansible-playbooks-${AWS::AccountId}
+          OutputS3KeyPrefix: log
+      Parameters:
+        SourceType:
+          - S3
+        SourceInfo:
+          - !Sub |
+            {"path": "https://ansible-playbooks-${AWS::AccountId}.s3-${AWS::Region}.amazonaws.com/playbooks.zip"}
+        InstallDependencies:
+          - "True"
+        PlaybookFile:
+          - ansible/playbooks/db-playbook.yml
         ExtraVariables:
           - SSM=True
         Check:

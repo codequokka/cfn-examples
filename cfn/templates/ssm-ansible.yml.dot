@@ -1,0 +1,4 @@
+digraph "template" {
+WebApplyAnsiblePlaybooksAssociation [label="WebApplyAnsiblePlaybooksAssociation\n<AWS::SSM::Association>"];
+DBApplyAnsiblePlaybooksAssociation [label="DBApplyAnsiblePlaybooksAssociation\n<AWS::SSM::Association>"];
+}

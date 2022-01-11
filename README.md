@@ -43,12 +43,35 @@ Templates
 ❯ aws cloudformation deploy --stack-name SSMAnsibleStack --template-file cfn/templates/ssm-ansible.yml
 
 # With rain
-❯ rain deploy cfn/templates/guardduty.yml GuarddutyStack
+❯ rain deploy cfn/templates/ssm-ansible.yml SSMAnsibleStack
 ```
+
+Resouces created by templates
+-----------------------------
+## IAM
+![](./docs/imgs/iam.jpg?raw=true "IAM")
+
+## VPC
+![](./docs/imgs/vpc.jpg?raw=true "VPC")
+
+## S3
+![](./docs/imgs/s3.jpg?raw=true "S3")
+
+## EC2
+![](./docs/imgs/ec2.jpg?raw=true "S3")
+
+## SSM Patch manager
+![](./docs/imgs/ssm-patchmanager.jpg?raw=true "S3")
+
+## Guardduty
+![](./docs/imgs/guardduty.jpg?raw=true "S3")
+
+## SSM Ansible
+![](./docs/imgs/ssm-ansible.jpg?raw=true "S3")
 
 Development
 -----------
-##Check templates
+## Check templates
 
 ###  Requirements
 ```
@@ -70,33 +93,12 @@ cfn-lint 0.56.3
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ssm-ansible.yml
 ```
 
-## Cfn-lint
+### Cfn-lint
 ```
 ❯ cfn-lint cfn/templates/*.yml
 ```
 
-## Cfn_nag
+### Cfn_nag
 ```
 ❯ bundle exec cfn_nag cfn/templates/*.yml
 ```
-# Resouces created by templates
-## IAM
-![](./docs/imgs/iam.jpg?raw=true "IAM")
-
-## VPC
-![](./docs/imgs/vpc.jpg?raw=true "VPC")
-
-## S3
-![](./docs/imgs/s3.jpg?raw=true "S3")
-
-## EC2
-![](./docs/imgs/ec2.jpg?raw=true "S3")
-
-## SSM Patch manager
-![](./docs/imgs/ssm-patchmanager.jpg?raw=true "S3")
-
-## Guardduty
-![](./docs/imgs/guardduty.jpg?raw=true "S3")
-
-## SSM Ansible
-![](./docs/imgs/ssm-ansible.jpg?raw=true "S3")

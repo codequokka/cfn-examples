@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create configurtion recorder, delivery channel.
+
+Resources:
+  #-----------------------------------------------------------------------------
+  # Buckets
+  #-----------------------------------------------------------------------------
+  DefaultConfigRecorder:
+    Type: AWS::Config::ConfigurationRecorder
+    Properties:
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig
+      RecordingGroup:
+        AllSupported: True
+        IncludeGlobalResourceTypes: True
+
+  DefaultDeliveryChannel:
+    Type: AWS::Config::DeliveryChannel
+    Properties:
+      S3BucketName: !ImportValue ConfigBucket
+      ConfigSnapshotDeliveryProperties:
+        DeliveryFrequency: TwentyFour_Hours
+      # TODO: Use KMS key to encrypt data
+      # S3KmsKeyArn: !Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/<kms-key-id>

@@ -12,6 +12,7 @@ Templates
 |ec2.yml|Create role, instance profiles, security groups, instances.|
 |ssm-patchmanager.yml|Create patch baselines, maintainance windows, targets, tasks.|
 |guardduty.yml|Enable a detector.|
+|config.yml|Create configurtion recorder, delivery channel.|
 |ssm-ansible.yml|Apply ansible playbooks with EC2 instances.|
 
 ### Deploy templates
@@ -23,6 +24,7 @@ Templates
 ❯ aws cloudformation deploy --stack-name EC2Stack --template-file cfn/templates/ec2.yml
 ❯ aws cloudformation deploy --stack-name SSMPatchmanagerStack --template-file cfn/templates/ssm-patchmanager.yml
 ❯ aws cloudformation deploy --stack-name GuarddutyStack --template-file cfn/templates/guardduty.yml
+❯ aws cloudformation deploy --stack-name ConfigStack --template-file cfn/templates/config.yml
 
 # With rain
 ❯ rain deploy cfn/templates/iam.yml IAMStack
@@ -31,6 +33,7 @@ Templates
 ❯ rain deploy cfn/templates/ec2.yml EC2Stack
 ❯ rain deploy cfn/templates/ssm-patchmanager.yml SSMPatchmanagerStack
 ❯ rain deploy cfn/templates/guardduty.yml GuarddutyStack
+❯ rain deploy cfn/templates/config.yml ConfigStack
 ```
 
 ### Apply ansible playbooks
@@ -90,6 +93,7 @@ cfn-lint 0.56.3
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ec2.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ssm-patchmanager.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/guardduty.yml
+❯ aws cloudformation validate-template --template-body file://cfn/templates/config.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ssm-ansible.yml
 ```
 

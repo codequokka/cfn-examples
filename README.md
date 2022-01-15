@@ -9,6 +9,7 @@ Templates
 |iam.yml|Create policies, groups, roles, users.|
 |vpc.yml|Create VPC, IGW, Subnets, Routetables, EIP, NATGW.|
 |kms.yml|Create keys, key aliases.|
+|sqs.yml|Create queues, queue policies.|
 |s3.yml|Create buckets.|
 |ec2.yml|Create role, instance profiles, security groups, instances.|
 |ssm-patchmanager.yml|Create patch baselines, maintainance windows, targets, tasks.|
@@ -22,6 +23,7 @@ Templates
 ❯ aws cloudformation deploy --stack-name IAMStack --template-file templates/iam.yml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides file://parameters/iam.json
 ❯ aws cloudformation deploy --stack-name VPCStack --template-file cfn/templates/vpc.yml
 ❯ aws cloudformation deploy --stack-name KMSStack --template-file cfn/templates/kms.yml
+❯ aws cloudformation deploy --stack-name SQSStack --template-file cfn/templates/sqs.yml
 ❯ aws cloudformation deploy --stack-name S3Stack --template-file cfn/templates/s3.yml
 ❯ aws cloudformation deploy --stack-name EC2Stack --template-file cfn/templates/ec2.yml
 ❯ aws cloudformation deploy --stack-name SSMPatchmanagerStack --template-file cfn/templates/ssm-patchmanager.yml
@@ -31,7 +33,8 @@ Templates
 # With rain
 ❯ rain deploy cfn/templates/iam.yml IAMStack
 ❯ rain deploy cfn/templates/vpc.yml VPCStack
-❯ rain deploy cfn/templates/vpc.yml KMSStack
+❯ rain deploy cfn/templates/kms.yml KMSStack
+❯ rain deploy cfn/templates/sqs.yml SQSStack
 ❯ rain deploy cfn/templates/s3.yml S3Stack
 ❯ rain deploy cfn/templates/ec2.yml EC2Stack
 ❯ rain deploy cfn/templates/ssm-patchmanager.yml SSMPatchmanagerStack
@@ -93,6 +96,7 @@ cfn-lint 0.56.3
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/iam.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/vpc.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/kms.yml
+❯ aws cloudformation validate-template --template-body file://cfn/templates/sqs.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/s3.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ec2.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ssm-patchmanager.yml

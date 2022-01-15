@@ -1,7 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Create buckets.
-
+Description: Create buckets, bucket policies.
 Resources:
   #-----------------------------------------------------------------------------
   # Buckets
@@ -26,6 +25,41 @@ Resources:
           - id: W51
             reason: Pending
 
+  CloudtrailBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub cloudtrail-${AWS::AccountId}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: Pending
+          - id: W41
+
+  GuarddutyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub guardduty-${AWS::AccountId}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: Pending
+          - id: W41
+            reason: Pending
+
   ConfigBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -43,6 +77,139 @@ Resources:
             reason: Pending
           - id: W41
             reason: Pending
+
+  #-----------------------------------------------------------------------------
+  # Bucket policies
+  #-----------------------------------------------------------------------------
+  CloudtrailBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CloudtrailBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow Cloudtrail to get bucket ACL
+            Effect: Allow
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: s3:GetBucketAcl
+            Resource: !GetAtt CloudtrailBucket.Arn
+          - Sid: Allow Cloudtrail to put logs
+            Effect: Allow
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt CloudtrailBucket.Arn
+                - !Sub /AWSLogs/${AWS::AccountId}/*
+            Condition:
+              StringEquals:
+                s3:x-amz-acl: bucket-owner-full-control
+          - Sid: Deny Cloudtrail to put unencrypted logs
+            Effect: Deny
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt CloudtrailBucket.Arn
+                - /*
+            Condition:
+              StringNotEquals:
+                s3:x-amz-server-side-encryption: aws:kms
+          - Sid: Deny Cloudtrail to put logs with incorrect encryption header
+            Effect: Deny
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt CloudtrailBucket.Arn
+                - /*
+            Condition:
+              StringNotEquals:
+                s3:x-amz-server-side-encryption-aws-kms-key-id: !ImportValue SentinelKeyArn
+          - Sid: Allow MicrosoftSentinelRole to get logs
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:role/MicrosoftSentinelRole
+            Action:
+              - s3:Get*
+              - s3:List*
+            Resource: !Join
+              - ""
+              - - !GetAtt CloudtrailBucket.Arn
+                - /*
+
+  GuarddutyBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref GuarddutyBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow GuardDuty to use the getBucketLocation operation
+            Effect: Allow
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: s3:GetBucketLocation
+            Resource: !GetAtt GuarddutyBucket.Arn
+          - Sid: Allow Guardduty to put logs
+            Effect: Allow
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyBucket.Arn
+                - /*
+          - Sid: Deny Guardduty to put unencrypted logs
+            Effect: Deny
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyBucket.Arn
+                - /*
+            Condition:
+              StringNotEquals:
+                s3:x-amz-server-side-encryption: aws:kms
+          - Sid: Deny Guardduty to put logs with incorrect encryption header
+            Effect: Deny
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyBucket.Arn
+                - /*
+            Condition:
+              StringNotEquals:
+                s3:x-amz-server-side-encryption-aws-kms-key-id: !ImportValue SentinelKeyArn
+          - Sid: Allow MicrosoftSentinelRole to get logs
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:role/MicrosoftSentinelRole
+            Action:
+              - s3:Get*
+              - s3:List*
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyBucket.Arn
+                - /*
+          - Sid: Deny non-HTTPS access
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyBucket.Arn
+                - /*
+            Condition:
+              Bool:
+                aws:SecureTransport: false
 
   ConfigBucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -82,7 +249,22 @@ Outputs:
     Export:
       Name: AnsiblePlaybooksBucket
 
+  CloudtrailBucket:
+    Value: !Ref CloudtrailBucket
+    Export:
+      Name: CloudtrailBucket
+
   ConfigBucket:
     Value: !Ref ConfigBucket
     Export:
       Name: ConfigBucket
+
+  CloudtrailBucketArn:
+    Value: !GetAtt CloudtrailBucket.Arn
+    Export:
+      Name: CloudtrailBucketArn
+
+  GuarddutyBucketArn:
+    Value: !GetAtt GuarddutyBucket.Arn
+    Export:
+      Name: GuarddutyBucketArn

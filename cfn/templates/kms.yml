@@ -78,21 +78,31 @@ Resources:
 
 Outputs:
   CommonKey:
-    Value: ! Ref CommonKey
+    Value: !Ref CommonKey
     Export:
       Name: CommonKey
 
   SentinelKey:
-    Value: ! Ref SentinelKey
+    Value: !Ref SentinelKey
     Export:
       Name: SentinelKey
 
+  CommonKeyArn:
+    Value: !GetAtt CommonKey.Arn
+    Export:
+      Name: CommonKeyArn
+
+  SentinelKeyArn:
+    Value: !GetAtt SentinelKey.Arn
+    Export:
+      Name: SentinelKeyArn
+
   CommonKeyAlias:
-    Value: ! Ref CommonKeyAlias
+    Value: !Ref CommonKeyAlias
     Export:
       Name: CommonKeyAlias
 
   SentinelKeyAlias:
-    Value: ! Ref SentinelKeyAlias
+    Value: !Ref SentinelKeyAlias
     Export:
       Name: SentinelKeyAlias

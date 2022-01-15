@@ -35,6 +35,17 @@ Resources:
         BlockPublicPolicy: True
         IgnorePublicAcls: True
         RestrictPublicBuckets: True
+      NotificationConfiguration:
+        QueueConfigurations:
+          - Queue: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:cloudtrail-ms-sentinel-queue
+            Event: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: !Sub AWSLogs/${AWS::AccountId}/Cloudtrail/
+                  - Name: suffix
+                    Value: .gz
     Metadata:
       cfn_nag:
         rules_to_suppress:
@@ -52,6 +63,17 @@ Resources:
         BlockPublicPolicy: True
         IgnorePublicAcls: True
         RestrictPublicBuckets: True
+      NotificationConfiguration:
+        QueueConfigurations:
+          - Queue: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:guardduty-ms-sentinel-queue
+            Event: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: !Sub AWSLogs/${AWS::AccountId}/Guardduty/
+                  - Name: suffix
+                    Value: .gz
     Metadata:
       cfn_nag:
         rules_to_suppress:
@@ -254,17 +276,22 @@ Outputs:
     Export:
       Name: CloudtrailBucket
 
+  GuarddutyBucket:
+    Value: !Ref GuarddutyBucket
+    Export:
+      Name: GuarddutyBucket
+
   ConfigBucket:
     Value: !Ref ConfigBucket
     Export:
       Name: ConfigBucket
 
-  CloudtrailBucketArn:
-    Value: !GetAtt CloudtrailBucket.Arn
-    Export:
-      Name: CloudtrailBucketArn
+  # CloudtrailBucketArn:
+  #   Value: !GetAtt CloudtrailBucket.Arn
+  #   Export:
+  #     Name: CloudtrailBucketArn
 
-  GuarddutyBucketArn:
-    Value: !GetAtt GuarddutyBucket.Arn
-    Export:
-      Name: GuarddutyBucketArn
+  # GuarddutyBucketArn:
+  #   Value: !GetAtt GuarddutyBucket.Arn
+  #   Export:
+  #     Name: GuarddutyBucketArn

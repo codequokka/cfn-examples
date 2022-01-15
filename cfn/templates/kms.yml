@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create keys, key aliases.
+
+Resources:
+  #-----------------------------------------------------------------------------
+  # Keys
+  #-----------------------------------------------------------------------------
+  CommonKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: A key for common usage.
+      EnableKeyRotation: true
+      Enabled: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+
+  SentinelKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: A key for sentinel usage.
+      EnableKeyRotation: true
+      Enabled: true
+      KeyPolicy:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+          - Sid: Allow CloudTrail to encrypt logs
+            Effect: Allow
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: kms:GenerateDataKey*
+            Resource: "*"
+          - Sid: Allow GuardDuty to use the key
+            Effect: Allow
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: kms:GenerateDataKey
+            Resource: "*"
+          - Sid: Allow MicrosoftSentinelRole to use the key
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:role/MicrosoftSentinelRole
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:DescribeKey
+            Resource: "*"
+
+  #-----------------------------------------------------------------------------
+  # Key aliases
+  #-----------------------------------------------------------------------------
+  CommonKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/common-key
+      TargetKeyId: !Ref CommonKey
+
+  SentinelKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/sentinel-key
+      TargetKeyId: !Ref SentinelKey
+
+Outputs:
+  CommonKey:
+    Value: ! Ref CommonKey
+    Export:
+      Name: CommonKey
+
+  SentinelKey:
+    Value: ! Ref SentinelKey
+    Export:
+      Name: SentinelKey
+
+  CommonKeyAlias:
+    Value: ! Ref CommonKeyAlias
+    Export:
+      Name: CommonKeyAlias
+
+  SentinelKeyAlias:
+    Value: ! Ref SentinelKeyAlias
+    Export:
+      Name: SentinelKeyAlias

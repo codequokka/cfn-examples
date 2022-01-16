@@ -2,6 +2,17 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: Create role, instance profiles, security groups, instances.
 
+Parameters:
+  CreateDBInstance:
+    Type: String
+    Default: true
+    AllowedValues:
+      - true
+      - false
+
+Conditions:
+  CreateDBInstance: !Equals [true, !Ref CreateDBInstance]
+
 Resources:
   #-----------------------------------------------------------------------------
   # Role
@@ -47,6 +58,7 @@ Resources:
       Roles:
         - Ref: EC2SSMRole
       InstanceProfileName: DB01EC2InstanceProfile
+    Condition: CreateDBInstance
 
   #-----------------------------------------------------------------------------
   # Security groups
@@ -89,6 +101,7 @@ Resources:
           ToPort: 3306
           CidrIp: 0.0.0.0/0
           Description: for MySQL
+    Condition: CreateDBInstance
     Metadata:
       cfn_nag:
         rules_to_suppress:
@@ -139,6 +152,7 @@ Resources:
           Value: DB01
         - Key: Patch Group
           Value: DB
+    Condition: CreateDBInstance
 
 Outputs:
   Web01EC2Instance:
@@ -150,3 +164,4 @@ Outputs:
     Value: !Ref DB01EC2Instance
     Export:
       Name: DB01EC2Instance
+    Condition: CreateDBInstance

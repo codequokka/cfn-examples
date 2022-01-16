@@ -43,7 +43,7 @@ Resources:
               S3Key:
                 Rules:
                   - Name: prefix
-                    Value: !Sub AWSLogs/${AWS::AccountId}/Cloudtrail/
+                    Value: !Sub AWSLogs/${AWS::AccountId}/CloudTrail/
                   - Name: suffix
                     Value: .gz
     Metadata:
@@ -52,6 +52,7 @@ Resources:
           - id: W35
             reason: Pending
           - id: W41
+            reason: Pending
 
   GuarddutyBucket:
     Type: AWS::S3::Bucket
@@ -71,7 +72,7 @@ Resources:
               S3Key:
                 Rules:
                   - Name: prefix
-                    Value: !Sub AWSLogs/${AWS::AccountId}/Guardduty/
+                    Value: !Sub AWSLogs/${AWS::AccountId}/GuardDuty/
                   - Name: suffix
                     Value: .gz
     Metadata:
@@ -128,6 +129,7 @@ Resources:
             Condition:
               StringEquals:
                 s3:x-amz-acl: bucket-owner-full-control
+                AWS:SourceArn: !Sub arn:aws:cloudtrail:${AWS::Region}:${AWS::AccountId}:trail/sentinel-trail
           - Sid: Deny Cloudtrail to put unencrypted logs
             Effect: Deny
             Principal:

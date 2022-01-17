@@ -8,7 +8,6 @@ Parameters:
     Type: String
     NoEcho: true
 
-<<<<<<< HEAD
   DefaultAdminUserName:
     Type: String
     NoEcho: true
@@ -18,8 +17,6 @@ Parameters:
     Default: 0.0.0.0/32
     NoEcho: true
 
-=======
->>>>>>> 89550ee... Add a conditron to create a access key
   CreateAccessKey:
     Type: String
     Default: false

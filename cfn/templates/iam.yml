@@ -8,6 +8,25 @@ Parameters:
     Type: String
     NoEcho: true
 
+  DefaultAdminUserName:
+    Type: String
+    NoEcho: true
+
+  DefaultIPAdress:
+    Type: String
+    Default: 0.0.0.0/32
+    NoEcho: true
+
+  CreateAccessKey:
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
+
+Conditions:
+  CreateAccessKey: !Equals [true, !Ref CreateAccessKey]
+
 Resources:
   #-----------------------------------------------------------------------------
   # Policies
@@ -69,6 +88,26 @@ Resources:
           - id: W28
             reason: Pending
 
+  IPRestrictionPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: IPRestrictionPolicy
+      Description: Policy to deny all actions from non specific IP address.
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Deny
+            Action: "*"
+            Resource: "*"
+            Condition:
+              NotIpAddress:
+                aws:SourceIp: !Ref DefaultIPAdress
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: Pending
+
   #-----------------------------------------------------------------------------
   # Groups
   #-----------------------------------------------------------------------------
@@ -80,6 +119,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/ReadOnlyAccess
         - !Ref SetOwnCredentialsPolicy
+        - !Ref IPRestrictionPolicy
     Metadata:
       cfn_nag:
         rules_to_suppress:
@@ -142,7 +182,7 @@ Resources:
   Admin01:
     Type: AWS::IAM::User
     Properties:
-      UserName: admin01
+      UserName: !Ref DefaultAdminUserName
       LoginProfile:
         Password: !Ref DefaultUserPassword
         PasswordResetRequired: true
@@ -154,19 +194,21 @@ Resources:
   # Access keys, Access key secrets
   #-----------------------------------------------------------------------------
   # Access key for admin01 user.
-  # Admin01AccessKey:
-  #   Type: AWS::IAM::AccessKey
-  #   Properties:
-  #     UserName: !Ref Admin01
+  Admin01AccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref Admin01
+    Condition: CreateAccessKey
 
   # Access key secret for admin01 user.
-  # Admin01AccessKeySecret:
-  #   Type: AWS::SecretsManager::Secret
-  #   Properties:
-  #     Name: !Sub ${Admin01}-credentials
-  #     SecretString: !Sub '{"accessKeyId":"${Admin01AccessKey}","secretAccessKey":"${Admin01AccessKey.SecretAccessKey}"}'
-  #   Metadata:
-  #     cfn_nag:
-  #       rules_to_suppress:
-  #         - id: W77
-  #           reason: Pending
+  Admin01AccessKeySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${Admin01}-credentials
+      SecretString: !Sub '{"accessKeyId":"${Admin01AccessKey}","secretAccessKey":"${Admin01AccessKey.SecretAccessKey}"}'
+    Condition: CreateAccessKey
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W77
+            reason: Pending

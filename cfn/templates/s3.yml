@@ -130,30 +130,6 @@ Resources:
               StringEquals:
                 s3:x-amz-acl: bucket-owner-full-control
                 AWS:SourceArn: !Sub arn:aws:cloudtrail:${AWS::Region}:${AWS::AccountId}:trail/sentinel-trail
-          - Sid: Deny Cloudtrail to put unencrypted logs
-            Effect: Deny
-            Principal:
-              Service: cloudtrail.amazonaws.com
-            Action: s3:PutObject
-            Resource: !Join
-              - ""
-              - - !GetAtt CloudtrailBucket.Arn
-                - /*
-            Condition:
-              StringNotEquals:
-                s3:x-amz-server-side-encryption: aws:kms
-          - Sid: Deny Cloudtrail to put logs with incorrect encryption header
-            Effect: Deny
-            Principal:
-              Service: cloudtrail.amazonaws.com
-            Action: s3:PutObject
-            Resource: !Join
-              - ""
-              - - !GetAtt CloudtrailBucket.Arn
-                - /*
-            Condition:
-              StringNotEquals:
-                s3:x-amz-server-side-encryption-aws-kms-key-id: !ImportValue SentinelKeyArn
           - Sid: Allow MicrosoftSentinelRole to get logs
             Effect: Allow
             Principal:

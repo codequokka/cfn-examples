@@ -120,6 +120,7 @@ Resources:
   Web01EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
+      # ImageId: ami-0bccc42bba4dedac1
       ImageId: ami-0218d08a1f9dac831
       InstanceType: t2.micro
       NetworkInterfaces:
@@ -138,6 +139,7 @@ Resources:
   DB01EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
+      # ImageId: ami-0bccc42bba4dedac1
       ImageId: ami-0218d08a1f9dac831
       InstanceType: t2.micro
       NetworkInterfaces:

@@ -20,5 +20,4 @@ Resources:
       S3BucketName: !ImportValue ConfigBucket
       ConfigSnapshotDeliveryProperties:
         DeliveryFrequency: TwentyFour_Hours
-      # TODO: Use KMS key to encrypt data
-      # S3KmsKeyArn: !Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/<kms-key-id>
+      S3KmsKeyArn: !ImportValue CommonKeyArn

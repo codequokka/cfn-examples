@@ -21,6 +21,14 @@ Resources:
               AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
             Action: kms:*
             Resource: "*"
+          - Sid: Allow AWS Config to use the key
+            Effect: Allow
+            Principal:
+              Service: config.amazonaws.com
+            Action:
+              - kms:GenerateDataKey*
+              - kms:Decrypt*
+            Resource: "*"
 
   SentinelKey:
     Type: AWS::KMS::Key

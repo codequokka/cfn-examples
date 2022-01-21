@@ -27,7 +27,7 @@ Resources:
               Service: config.amazonaws.com
             Action:
               - kms:GenerateDataKey*
-              - kms:Decrypt*
+              - kms:Decrypt
             Resource: "*"
 
   SentinelKey:

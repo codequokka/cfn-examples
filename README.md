@@ -13,6 +13,7 @@ Templates
 |s3.yml|Create buckets.|
 |ec2.yml|Create role, instance profiles, security groups, instances.|
 |ssm-patchmanager.yml|Create patch baselines, maintainance windows, targets, tasks.|
+|cloudtrail.yml|Create a trail.|
 |guardduty.yml|Enable a detector.|
 |config.yml|Create configurtion recorder, delivery channel.|
 |ssm-ansible.yml|Apply ansible playbooks with EC2 instances.|
@@ -27,6 +28,7 @@ Templates
 ❯ aws cloudformation deploy --stack-name S3Stack --template-file cfn/templates/s3.yml
 ❯ aws cloudformation deploy --stack-name EC2Stack --template-file cfn/templates/ec2.yml
 ❯ aws cloudformation deploy --stack-name SSMPatchmanagerStack --template-file cfn/templates/ssm-patchmanager.yml
+❯ aws cloudformation deploy --stack-name CloudtrailStack --template-file cfn/templates/cloudtrail.yml
 ❯ aws cloudformation deploy --stack-name GuarddutyStack --template-file cfn/templates/guardduty.yml
 ❯ aws cloudformation deploy --stack-name ConfigStack --template-file cfn/templates/config.yml
 
@@ -38,6 +40,7 @@ Templates
 ❯ rain deploy cfn/templates/s3.yml S3Stack
 ❯ rain deploy cfn/templates/ec2.yml EC2Stack
 ❯ rain deploy cfn/templates/ssm-patchmanager.yml SSMPatchmanagerStack
+❯ rain deploy cfn/templates/cloudtrail.yml CloudtrailStack
 ❯ rain deploy cfn/templates/guardduty.yml GuarddutyStack
 ❯ rain deploy cfn/templates/config.yml ConfigStack
 ```
@@ -63,6 +66,12 @@ Resouces created by templates
 ## VPC
 ![](./docs/imgs/vpc.jpg?raw=true "VPC")
 
+## KMS
+![](./docs/imgs/kms.jpg?raw=true "S3")
+
+## SQS
+![](./docs/imgs/sqs.jpg?raw=true "S3")
+
 ## S3
 ![](./docs/imgs/s3.jpg?raw=true "S3")
 
@@ -72,8 +81,14 @@ Resouces created by templates
 ## SSM Patch manager
 ![](./docs/imgs/ssm-patchmanager.jpg?raw=true "S3")
 
+## Cloudtrail
+![](./docs/imgs/cloudtrail.jpg?raw=true "S3")
+
 ## Guardduty
 ![](./docs/imgs/guardduty.jpg?raw=true "S3")
+
+## Config
+![](./docs/imgs/config.jpg?raw=true "S3")
 
 ## SSM Ansible
 ![](./docs/imgs/ssm-ansible.jpg?raw=true "S3")

@@ -115,6 +115,7 @@ cfn-lint 0.56.3
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/s3.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ec2.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ssm-patchmanager.yml
+❯ aws cloudformation validate-template --template-body file://cfn/templates/cloudtrail.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/guardduty.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/config.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ssm-ansible.yml

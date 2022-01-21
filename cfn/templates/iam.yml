@@ -1,7 +1,7 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Create policies, groups, roles, users.
+Description: Create managed policies, groups, roles, users, access keys, access key secrets.
 
 Parameters:
   DefaultUserPassword:

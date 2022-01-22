@@ -62,11 +62,11 @@ Resources:
           #     - iam:Get*
           #     - iam:List*
           #   Resource: "*"
-    # Metadata:
-    #   cfn_nag:
-    #     rules_to_suppress:
-    #       - id: W28
-    #         reason: Pending
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: Pending
 
   ForceMFAPolicy:
     Type: AWS::IAM::ManagedPolicy

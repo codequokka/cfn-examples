@@ -1,0 +1,20 @@
+name: Run cfn-nag
+
+on:
+  push:
+    branches:
+  pull_request:
+    branches:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # With '-f', treat warnings as failing violations.
+      - name: Run cfn-nag
+        uses: minchao/cfn-nag-action@master
+        with:
+          args: "-f --input-path ./cfn/templates/"

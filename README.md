@@ -1,6 +1,9 @@
 CloudFormation template examples
 ================================
 
+[![Run cfn-lint](https://github.com/codequokka/cfn-examples/actions/workflows/cfn-lint.yml/badge.svg)](https://github.com/codequokka/cfn-examples/actions/workflows/cfn-lint.yml)
+[![Run cfn-nag](https://github.com/codequokka/cfn-examples/actions/workflows/cfn-nag.yml/badge.svg)](https://github.com/codequokka/cfn-examples/actions/workflows/cfn-nag.yml)
+
 Templates
 ---------
 ### Overview
@@ -95,7 +98,7 @@ Resouces created by templates
 
 Development
 -----------
-## Check templates
+## Check templates by hand
 
 ###  Requirements
 ```
@@ -115,6 +118,7 @@ cfn-lint 0.56.3
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/s3.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ec2.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ssm-patchmanager.yml
+❯ aws cloudformation validate-template --template-body file://cfn/templates/cloudtrail.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/guardduty.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/config.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ssm-ansible.yml
@@ -129,3 +133,6 @@ cfn-lint 0.56.3
 ```
 ❯ bundle exec cfn_nag cfn/templates/*.yml
 ```
+
+## Check templates by Github Actions
+When you push a commit, Github actions run cfn-lint, cfn-nag against templates.

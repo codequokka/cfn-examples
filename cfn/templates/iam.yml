@@ -1,7 +1,7 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Create policies, groups, roles, users.
+Description: Create managed policies, groups, roles, users, access keys, access key secrets.
 
 Parameters:
   DefaultUserPassword:
@@ -205,10 +205,6 @@ Resources:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: !Sub ${Admin01}-credentials
+      KmsKeyId: !ImportValue CommonKeyAlias
       SecretString: !Sub '{"accessKeyId":"${Admin01AccessKey}","secretAccessKey":"${Admin01AccessKey.SecretAccessKey}"}'
     Condition: CreateAccessKey
-    Metadata:
-      cfn_nag:
-        rules_to_suppress:
-          - id: W77
-            reason: Pending

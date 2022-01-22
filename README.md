@@ -95,7 +95,7 @@ Resouces created by templates
 
 Development
 -----------
-## Check templates
+## Check templates by hand
 
 ###  Requirements
 ```
@@ -130,3 +130,6 @@ cfn-lint 0.56.3
 ```
 ❯ bundle exec cfn_nag cfn/templates/*.yml
 ```
+
+## Check templates by Github Actions
+When you push a commit, Github actions run cfn-lint.

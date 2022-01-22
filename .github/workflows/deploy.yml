@@ -1,0 +1,36 @@
+name: Deploy CFn templates
+
+on:
+  push:
+    branches:
+      - github-actions-cd
+    paths:
+      - cfn/templates/*
+      - .github/workflows/deploy.yml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNTID }}:role/${{ secrets.ROLE_NAME }}
+          role-session-name: cfn-deploy
+
+      - name: Deploy github actions CD demo template
+        env:
+          STACK_NAME: GACDDemoStack
+          TEMPLATE_FILE: cfn/templates/gacd-demo.yml
+        run: |
+          aws cloudformation deploy \
+            --stack-name $STACK_NAME \
+            --template-file $TEMPLATE_FILE \
+            --no-fail-on-empty-changeset

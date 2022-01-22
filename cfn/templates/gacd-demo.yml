@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create buckets, bucket policies.
+Resources:
+  #-----------------------------------------------------------------------------
+  # Buckets
+  #-----------------------------------------------------------------------------
+  GACDDemoBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub gacd-demo-${AWS::AccountId}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: Pending
+          - id: W41
+            reason: Pending
+          - id: W51
+            reason: Pending
+
+  #-----------------------------------------------------------------------------
+  # Bucket policies
+  #-----------------------------------------------------------------------------
+
+Outputs:
+  GACDDemoBucket:
+    Value: !Ref GACDDemoBucket

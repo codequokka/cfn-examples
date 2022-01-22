@@ -1,0 +1,16 @@
+name: Run cfn-nag
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run cfn-nag
+        uses: minchao/cfn-nag-action@master
+        with:
+          args: "--input-path ./cfn/templates/"

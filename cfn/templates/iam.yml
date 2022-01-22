@@ -101,7 +101,7 @@ Resources:
             Resource: "*"
             Condition:
               NotIpAddress:
-                aws:SourceIp: DefaultIPAdress
+                aws:SourceIp: !Ref DefaultIPAdress
     Metadata:
       cfn_nag:
         rules_to_suppress:

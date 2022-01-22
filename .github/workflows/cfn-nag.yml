@@ -13,8 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # With '-f', treat warnings as failing violations.
       - name: Run cfn-nag
-        uses: minchao/cfn-nag-action@master
+        uses: stelligent/cfn_nag@master
         with:
-          args: "-f --input-path ./cfn/templates/"
+          input_path: ./cfn/templates
+          extra_args: --fail-on-warnings

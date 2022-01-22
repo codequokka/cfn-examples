@@ -9,9 +9,9 @@ Templates
 ### Overview
 |CFn template|Purpose|
 |------------|--------|
+|kms.yml|Create keys, key aliases.|
 |iam.yml|Create policies, groups, roles, users.|
 |vpc.yml|Create VPC, IGW, Subnets, Routetables, EIP, NATGW.|
-|kms.yml|Create keys, key aliases.|
 |sqs.yml|Create queues, queue policies.|
 |s3.yml|Create buckets.|
 |ec2.yml|Create role, instance profiles, security groups, instances.|
@@ -24,9 +24,9 @@ Templates
 ### Deploy templates
 ```
 # With aws cloudformatin
+❯ aws cloudformation deploy --stack-name KMSStack --template-file cfn/templates/kms.yml
 ❯ aws cloudformation deploy --stack-name IAMStack --template-file templates/iam.yml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides file://parameters/iam.json
 ❯ aws cloudformation deploy --stack-name VPCStack --template-file cfn/templates/vpc.yml
-❯ aws cloudformation deploy --stack-name KMSStack --template-file cfn/templates/kms.yml
 ❯ aws cloudformation deploy --stack-name SQSStack --template-file cfn/templates/sqs.yml
 ❯ aws cloudformation deploy --stack-name S3Stack --template-file cfn/templates/s3.yml
 ❯ aws cloudformation deploy --stack-name EC2Stack --template-file cfn/templates/ec2.yml
@@ -36,9 +36,9 @@ Templates
 ❯ aws cloudformation deploy --stack-name ConfigStack --template-file cfn/templates/config.yml
 
 # With rain
+❯ rain deploy cfn/templates/kms.yml KMSStack
 ❯ rain deploy cfn/templates/iam.yml IAMStack
 ❯ rain deploy cfn/templates/vpc.yml VPCStack
-❯ rain deploy cfn/templates/kms.yml KMSStack
 ❯ rain deploy cfn/templates/sqs.yml SQSStack
 ❯ rain deploy cfn/templates/s3.yml S3Stack
 ❯ rain deploy cfn/templates/ec2.yml EC2Stack
@@ -63,14 +63,14 @@ Templates
 
 Resouces created by templates
 -----------------------------
+## KMS
+![](./docs/imgs/kms.jpg?raw=true "S3")
+
 ## IAM
 ![](./docs/imgs/iam.jpg?raw=true "IAM")
 
 ## VPC
 ![](./docs/imgs/vpc.jpg?raw=true "VPC")
-
-## KMS
-![](./docs/imgs/kms.jpg?raw=true "S3")
 
 ## SQS
 ![](./docs/imgs/sqs.jpg?raw=true "S3")
@@ -111,9 +111,9 @@ cfn-lint 0.56.3
 
 ### Validation
 ```
+❯ aws cloudformation validate-template --template-body file://cfn/templates/kms.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/iam.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/vpc.yml
-❯ aws cloudformation validate-template --template-body file://cfn/templates/kms.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/sqs.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/s3.yml
 ❯ aws cloudformation validate-template --template-body file://cfn/templates/ec2.yml

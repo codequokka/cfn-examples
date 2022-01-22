@@ -10,7 +10,7 @@ Templates
 |CFn template|Purpose|
 |------------|--------|
 |kms.yml|Create keys, key aliases.|
-|iam.yml|Create policies, groups, roles, users.|
+|iam.yml|Create managed policies, groups, roles, users, access keys, access key secrets.|
 |vpc.yml|Create VPC, IGW, Subnets, Routetables, EIP, NATGW.|
 |sqs.yml|Create queues, queue policies.|
 |s3.yml|Create buckets.|

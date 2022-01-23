@@ -46,6 +46,9 @@ Templates
 ❯ rain deploy cfn/templates/cloudtrail.yml CloudtrailStack
 ❯ rain deploy cfn/templates/guardduty.yml GuarddutyStack
 ❯ rain deploy cfn/templates/config.yml ConfigStack
+
+# With github actions
+# Under testing, available only on github-actions-cd branch
 ```
 
 ### Apply ansible playbooks

@@ -273,3 +273,8 @@ Outputs:
   #   Value: !GetAtt GuarddutyBucket.Arn
   #   Export:
   #     Name: GuarddutyBucketArn
+  
+  ConfigBucketArn:
+    Value: !GetAtt ConfigBucket.Arn
+    Export:
+      Name: ConfigBucketArn

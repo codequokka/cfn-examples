@@ -9,7 +9,7 @@ Resources:
   DefaultConfigRecorder:
     Type: AWS::Config::ConfigurationRecorder
     Properties:
-      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig
+      RoleARN: !ImportValue ConfigRoleArn
       RecordingGroup:
         AllSupported: True
         IncludeGlobalResourceTypes: True

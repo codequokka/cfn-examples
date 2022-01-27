@@ -164,6 +164,9 @@ Resources:
             Principal:
               AWS:
                 - !Sub arn:aws:iam::${AWS::AccountId}:root
+            Condition:
+              Bool:
+                aws:MultiFactorAuthPresent: true
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
       MaxSessionDuration: 43200

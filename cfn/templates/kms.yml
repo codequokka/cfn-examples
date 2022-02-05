@@ -83,34 +83,33 @@ Resources:
     Properties:
       AliasName: alias/sentinel-key
       TargetKeyId: !Ref SentinelKey
+# Outputs:
+#   CommonKey:
+#     Value: !Ref CommonKey
+#     Export:
+#       Name: CommonKey
 
-Outputs:
-  CommonKey:
-    Value: !Ref CommonKey
-    Export:
-      Name: CommonKey
+#   SentinelKey:
+#     Value: !Ref SentinelKey
+#     Export:
+#       Name: SentinelKey
 
-  SentinelKey:
-    Value: !Ref SentinelKey
-    Export:
-      Name: SentinelKey
+#   CommonKeyArn:
+#     Value: !GetAtt CommonKey.Arn
+#     Export:
+#       Name: CommonKeyArn
 
-  CommonKeyArn:
-    Value: !GetAtt CommonKey.Arn
-    Export:
-      Name: CommonKeyArn
+#   SentinelKeyArn:
+#     Value: !GetAtt SentinelKey.Arn
+#     Export:
+#       Name: SentinelKeyArn
 
-  SentinelKeyArn:
-    Value: !GetAtt SentinelKey.Arn
-    Export:
-      Name: SentinelKeyArn
+#   CommonKeyAlias:
+#     Value: !Ref CommonKeyAlias
+#     Export:
+#       Name: CommonKeyAlias
 
-  CommonKeyAlias:
-    Value: !Ref CommonKeyAlias
-    Export:
-      Name: CommonKeyAlias
-
-  SentinelKeyAlias:
-    Value: !Ref SentinelKeyAlias
-    Export:
-      Name: SentinelKeyAlias
+#   SentinelKeyAlias:
+#     Value: !Ref SentinelKeyAlias
+#     Export:
+#       Name: SentinelKeyAlias

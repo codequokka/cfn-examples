@@ -39,6 +39,12 @@ Resources:
               Service: cloudtrail.amazonaws.com
             Action: kms:GenerateDataKey*
             Resource: "*"
+          - Sid: Allow GuardDuty to use the key
+            Effect: Allow
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: kms:GenerateDataKey
+            Resource: "*"
           - Sid: Allow AWS Config to use the key
             Effect: Allow
             Principal:

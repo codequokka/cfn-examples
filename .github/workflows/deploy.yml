@@ -47,3 +47,23 @@ jobs:
             --stack-name $STACK_NAME \
             --template-file $TEMPLATE_FILE \
             --no-fail-on-empty-changeset
+
+      - name: Deploy a template for Cloudtrail
+        env:
+          STACK_NAME: CloudtrailStack
+          TEMPLATE_FILE: cfn/templates/cloudtrail.yml
+        run: |
+          aws cloudformation deploy \
+            --stack-name $STACK_NAME \
+            --template-file $TEMPLATE_FILE \
+            --no-fail-on-empty-changeset
+
+      - name: Deploy a template for Guardduty
+        env:
+          STACK_NAME: GuarddutyStack
+          TEMPLATE_FILE: cfn/templates/guardduty.yml
+        run: |
+          aws cloudformation deploy \
+            --stack-name $STACK_NAME \
+            --template-file $TEMPLATE_FILE \
+            --no-fail-on-empty-changeset

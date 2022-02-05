@@ -1,11 +1,90 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Enable a detector.
+Description: Enable Guardduty service.
 
 Resources:
   #-----------------------------------------------------------------------------
-  # Detector
+  # Buckets
+  #-----------------------------------------------------------------------------
+  GuarddutyServiceBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub guardduty-service-${AWS::AccountId}-an1
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: Pending
+          - id: W41
+            reason: Pending
+
+  GuarddutyServicveBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref GuarddutyServiceBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Allow GuardDuty to use the getBucketLocation operation
+            Effect: Allow
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: s3:GetBucketLocation
+            Resource: !GetAtt GuarddutyServiceBucket.Arn
+          - Sid: Allow Guardduty to put logs
+            Effect: Allow
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyServiceBucket.Arn
+                - /*
+          - Sid: Deny Guardduty to put unencrypted logs
+            Effect: Deny
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyServiceBucket.Arn
+                - /*
+            Condition:
+              StringNotEquals:
+                s3:x-amz-server-side-encryption: aws:kms
+          - Sid: Deny Guardduty to put logs with incorrect encryption header
+            Effect: Deny
+            Principal:
+              Service: guardduty.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyServiceBucket.Arn
+                - /*
+            Condition:
+              StringNotEquals:
+                s3:x-amz-server-side-encryption-aws-kms-key-id: !ImportValue CommonKeyArn
+          - Sid: Deny non-HTTPS access
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource: !Join
+              - ""
+              - - !GetAtt GuarddutyServiceBucket.Arn
+                - /*
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+
+  #-----------------------------------------------------------------------------
+  # Detectors
   #-----------------------------------------------------------------------------
   Detector:
     Type: AWS::GuardDuty::Detector

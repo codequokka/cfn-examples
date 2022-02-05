@@ -25,117 +25,15 @@ Resources:
           - id: W51
             reason: Pending
 
-  GuarddutyBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub guardduty-${AWS::AccountId}
-      AccessControl: Private
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: True
-        BlockPublicPolicy: True
-        IgnorePublicAcls: True
-        RestrictPublicBuckets: True
-      NotificationConfiguration:
-        QueueConfigurations:
-          - Queue: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:guardduty-ms-sentinel-queue
-            Event: s3:ObjectCreated:*
-            Filter:
-              S3Key:
-                Rules:
-                  - Name: prefix
-                    Value: !Sub AWSLogs/${AWS::AccountId}/GuardDuty/
-                  - Name: suffix
-                    Value: .gz
-    Metadata:
-      cfn_nag:
-        rules_to_suppress:
-          - id: W35
-            reason: Pending
-          - id: W41
-            reason: Pending
-
   #-----------------------------------------------------------------------------
   # Bucket policies
   #-----------------------------------------------------------------------------
-  GuarddutyBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref GuarddutyBucket
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Sid: Allow GuardDuty to use the getBucketLocation operation
-            Effect: Allow
-            Principal:
-              Service: guardduty.amazonaws.com
-            Action: s3:GetBucketLocation
-            Resource: !GetAtt GuarddutyBucket.Arn
-          - Sid: Allow Guardduty to put logs
-            Effect: Allow
-            Principal:
-              Service: guardduty.amazonaws.com
-            Action: s3:PutObject
-            Resource: !Join
-              - ""
-              - - !GetAtt GuarddutyBucket.Arn
-                - /*
-          - Sid: Deny Guardduty to put unencrypted logs
-            Effect: Deny
-            Principal:
-              Service: guardduty.amazonaws.com
-            Action: s3:PutObject
-            Resource: !Join
-              - ""
-              - - !GetAtt GuarddutyBucket.Arn
-                - /*
-            Condition:
-              StringNotEquals:
-                s3:x-amz-server-side-encryption: aws:kms
-          - Sid: Deny Guardduty to put logs with incorrect encryption header
-            Effect: Deny
-            Principal:
-              Service: guardduty.amazonaws.com
-            Action: s3:PutObject
-            Resource: !Join
-              - ""
-              - - !GetAtt GuarddutyBucket.Arn
-                - /*
-            Condition:
-              StringNotEquals:
-                s3:x-amz-server-side-encryption-aws-kms-key-id: !ImportValue SentinelKeyArn
-          - Sid: Allow MicrosoftSentinelRole to get logs
-            Effect: Allow
-            Principal:
-              AWS: !Sub arn:aws:iam::${AWS::AccountId}:role/MicrosoftSentinelRole
-            Action:
-              - s3:Get*
-              - s3:List*
-            Resource: !Join
-              - ""
-              - - !GetAtt GuarddutyBucket.Arn
-                - /*
-          - Sid: Deny non-HTTPS access
-            Effect: Deny
-            Principal: "*"
-            Action: s3:*
-            Resource: !Join
-              - ""
-              - - !GetAtt GuarddutyBucket.Arn
-                - /*
-            Condition:
-              Bool:
-                aws:SecureTransport: false
 
 Outputs:
   AnsiblePlaybooksBucket:
     Value: !Ref AnsiblePlaybooksBucket
     Export:
       Name: AnsiblePlaybooksBucket
-
-  GuarddutyBucket:
-    Value: !Ref GuarddutyBucket
-    Export:
-      Name: GuarddutyBucket
 
   # CloudtrailBucketArn:
   #   Value: !GetAtt CloudtrailBucket.Arn

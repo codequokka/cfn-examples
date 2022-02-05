@@ -6,5 +6,9 @@
   {
     "ParameterKey": "CreatePrivateSubnet",
     "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "CreateDBInstance",
+    "ParameterValue": "false"
   }
 ]

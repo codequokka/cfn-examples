@@ -33,6 +33,12 @@ Resources:
               AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
             Action: kms:*
             Resource: "*"
+          - Sid: Allow CloudTrail to encrypt logs
+            Effect: Allow
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: kms:GenerateDataKey*
+            Resource: "*"
           - Sid: Allow AWS Config to use the key
             Effect: Allow
             Principal:
@@ -114,10 +120,11 @@ Outputs:
     Export:
       Name: CommonKeyArn
 
-  # SentinelKeyArn:
-  #   Value: !GetAtt SentinelKey.Arn
-  #   Export:
-  #     Name: SentinelKeyArn
+  SentinelKeyArn:
+    Value: !GetAtt SentinelKey.Arn
+    Export:
+      Name: SentinelKeyArn
+    Condition: EnableSentinelLogIntegration
 
   # CommonKeyAlias:
   #   Value: !Ref CommonKeyAlias

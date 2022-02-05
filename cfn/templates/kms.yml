@@ -2,6 +2,18 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: Create keys, key aliases.
 
+Parameters:
+  EnableSentinelLogIntegration:
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
+
+Conditions:
+  EnableSentinelLogIntegration:
+    !Equals [true, !Ref EnableSentinelLogIntegration]
+
 Resources:
   #-----------------------------------------------------------------------------
   # Keys
@@ -68,6 +80,7 @@ Resources:
               - kms:GenerateDataKey*
               - kms:DescribeKey
             Resource: "*"
+    Condition: EnableSentinelLogIntegration
 
   #-----------------------------------------------------------------------------
   # Key aliases
@@ -83,6 +96,7 @@ Resources:
     Properties:
       AliasName: alias/sentinel-key
       TargetKeyId: !Ref SentinelKey
+    Condition: EnableSentinelLogIntegration
 
 Outputs:
   #   CommonKey:

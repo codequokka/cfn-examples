@@ -178,46 +178,6 @@ Resources:
           - id: W43
             reason: This role can be only used by specified user with MFA is activated
 
-  # For Config service.
-  ConfigRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: ConfigRole
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: config.amazonaws.com
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSConfigRole
-      Policies:
-        - PolicyName: PutLogsPolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:PutObject
-                  - s3:PutObjectAcl
-                Resource: !Join
-                  - ""
-                  - - !ImportValue ConfigBucketArn
-                    - !Sub /AWSLogs/${AWS::AccountId}/*
-                Condition:
-                  StringLike:
-                    s3:x-amz-acl: bucket-owner-full-control
-              - Effect: Allow
-                Action:
-                  - s3:GetBucketAcl
-                Resource: !ImportValue ConfigBucketArn
-    Metadata:
-      cfn_nag:
-        rules_to_suppress:
-          - id: W28
-            reason: Pending
-
   #-----------------------------------------------------------------------------
   # Users
   #-----------------------------------------------------------------------------
@@ -251,9 +211,3 @@ Resources:
       KmsKeyId: !ImportValue CommonKeyAlias
       SecretString: !Sub '{"accessKeyId":"${Admin01AccessKey}","secretAccessKey":"${Admin01AccessKey.SecretAccessKey}"}'
     Condition: CreateAccessKey
-
-Outputs:
-  ConfigRoleArn:
-    Value: !GetAtt ConfigRole.Arn
-    Export:
-      Name: ConfigRoleArn

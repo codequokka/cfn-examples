@@ -83,24 +83,6 @@ Resources:
           - id: W41
             reason: Pending
 
-  ConfigBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub config-bucket-${AWS::AccountId}
-      AccessControl: Private
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: True
-        BlockPublicPolicy: True
-        IgnorePublicAcls: True
-        RestrictPublicBuckets: True
-    Metadata:
-      cfn_nag:
-        rules_to_suppress:
-          - id: W35
-            reason: Pending
-          - id: W41
-            reason: Pending
-
   #-----------------------------------------------------------------------------
   # Bucket policies
   #-----------------------------------------------------------------------------
@@ -211,38 +193,6 @@ Resources:
               Bool:
                 aws:SecureTransport: false
 
-  ConfigBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref ConfigBucket
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Sid: AWSConfigBucketPermissionsCheck
-            Effect: Allow
-            Principal:
-              Service: config.amazonaws.com
-            Action: s3:GetBucketAcl
-            Resource: !GetAtt ConfigBucket.Arn
-          - Sid: AWSConfigBucketExistenceCheck
-            Effect: Allow
-            Principal:
-              Service: config.amazonaws.com
-            Action: s3:ListBucket
-            Resource: !GetAtt ConfigBucket.Arn
-          - Sid: AWSConfigBucketDelivery
-            Effect: Allow
-            Principal:
-              Service: config.amazonaws.com
-            Action: s3:PutObject
-            Resource: !Join
-              - ""
-              - - !GetAtt ConfigBucket.Arn
-                - !Sub /AWSLogs/${AWS::AccountId}/Config/*
-            Condition:
-              StringEquals:
-                s3:x-amz-acl: bucket-owner-full-control
-
 Outputs:
   AnsiblePlaybooksBucket:
     Value: !Ref AnsiblePlaybooksBucket
@@ -259,11 +209,6 @@ Outputs:
     Export:
       Name: GuarddutyBucket
 
-  ConfigBucket:
-    Value: !Ref ConfigBucket
-    Export:
-      Name: ConfigBucket
-
   # CloudtrailBucketArn:
   #   Value: !GetAtt CloudtrailBucket.Arn
   #   Export:
@@ -273,8 +218,3 @@ Outputs:
   #   Value: !GetAtt GuarddutyBucket.Arn
   #   Export:
   #     Name: GuarddutyBucketArn
-  
-  ConfigBucketArn:
-    Value: !GetAtt ConfigBucket.Arn
-    Export:
-      Name: ConfigBucketArn

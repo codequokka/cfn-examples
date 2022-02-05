@@ -2,5 +2,9 @@
   {
     "ParameterKey": "EnableSentinelLogIntegration",
     "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "CreatePrivateSubnet",
+    "ParameterValue": "false"
   }
 ]

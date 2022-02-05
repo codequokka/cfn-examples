@@ -5,7 +5,7 @@ Description: Create VPC, IGW, Subnets, Routetables, EIP, NATGW.
 Parameters:
   CreatePrivateSubnet:
     Type: String
-    Default: true
+    Default: false
     AllowedValues:
       - true
       - false
@@ -15,7 +15,7 @@ Conditions:
 
 Resources:
   #-----------------------------------------------------------------------------
-  # VPC
+  # VPCs
   #-----------------------------------------------------------------------------
   VPC01:
     Type: AWS::EC2::VPC
@@ -32,7 +32,7 @@ Resources:
             reason: Pending
 
   #-----------------------------------------------------------------------------
-  # IGW
+  # IGWs
   #-----------------------------------------------------------------------------
   IGW01:
     Type: AWS::EC2::InternetGateway
@@ -126,7 +126,7 @@ Resources:
     Condition: CreatePrivateSubnet
 
   #-----------------------------------------------------------------------------
-  # EIP
+  # EIPs
   #-----------------------------------------------------------------------------
   PublicSubnetNatGatewayEIP:
     Type: AWS::EC2::EIP
@@ -135,7 +135,7 @@ Resources:
     Condition: CreatePrivateSubnet
 
   #-----------------------------------------------------------------------------
-  # NATGW
+  # NATGWs
   #-----------------------------------------------------------------------------
   PublicSubnetNatGateway:
     Type: AWS::EC2::NatGateway
